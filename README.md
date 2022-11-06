@@ -14,6 +14,6 @@ allprojects {
 > Step 2. Add the dependency
 ```
 dependencies {
-	implementation 'com.github.AkashFulari:AFSColorChooser:Tag'
+	implementation 'com.github.AkashFulari:AFSColorChooser:1.0'
 }
 ```
