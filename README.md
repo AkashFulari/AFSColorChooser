@@ -3,6 +3,7 @@ Android Color Chooser Library
 
 > Step 1. Add the JitPack repository to your build file
   Add it in your root build.gradle at the end of repositories:
+
 ```
 allprojects {
 	repositories {
@@ -18,7 +19,40 @@ dependencies {
 }
 ```
 
-> Step 3. Use in your program
+> Step 3. Create layout file
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:text="COLOR SELECT"/>
+        <Button
+            android:id="@+id/btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="COLOR CHOOSER"
+            android:layout_marginLeft="15dp"/>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+```
+
+> Step 4. Use into your Activity 
 ```
 ...
 public class MainActivity extends AppCompatActivity {
