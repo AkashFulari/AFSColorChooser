@@ -2,6 +2,7 @@ package com.apaka.afscolorchooser;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         Button btn = findViewById(R.id.btn);
         TextView txt = findViewById(R.id.txt);
         AFSColorPicker apfck = new AFSColorPicker(MainActivity.this);
+        apfck.setColor(Color.parseColor("#829384"));
         apfck.setColorChooseListener(new AFSColorPicker.ColorChooserListener() {
             @Override
             public void onColorSelected(int clr) {

@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,6 +27,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class AFSColorPicker extends Dialog implements View.OnClickListener, View.OnTouchListener{
     private int DEFAULT_COLOR = Color.parseColor("#FF6600");
     private int DEFAULT_BLACK_COLOR = Color.parseColor("#000000");
@@ -41,7 +44,7 @@ public class AFSColorPicker extends Dialog implements View.OnClickListener, View
     private Point gradientPoints;
     private Point alphaPoints;
     private EditText aCode,rCode,gCode,bCode,hexaCode;
-    private TextView rView,gView,bView;
+    private TextView rView,gView,bView,dtitle;
     private ImageButton changeCode;
 
     public AFSColorPicker(Context ctx){
@@ -64,6 +67,7 @@ public class AFSColorPicker extends Dialog implements View.OnClickListener, View
         initialize();
     }
 
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -71,6 +75,8 @@ public class AFSColorPicker extends Dialog implements View.OnClickListener, View
         //that you can add a flag that you can call windowManager.addView now.
     }
     public void initialize(){
+
+        dtitle = findViewById(R.id.dtitle);
         alpha = findViewById(R.id.alphaChooser);
         gradient = findViewById(R.id.gradientChooser);
         picker = findViewById(R.id.colorPicker);
@@ -102,7 +108,7 @@ public class AFSColorPicker extends Dialog implements View.OnClickListener, View
                 Color.parseColor("#FB02FB"),
                 Color.parseColor("#FF0004"),
         });
-        setRadialGradientColor(gradient,new int[]{DEFAULT_WHITE_COLOR, DEFAULT_COLOR, DEFAULT_BLACK_COLOR,});
+        setRadialGradientColor(gradient,new int[]{DEFAULT_WHITE_COLOR, DEFAULT_COLOR});
         setGradientColor(alpha,new int[]{DEFAULT_TRANSPERENT_COLOR,DEFAULT_COLOR,});
         Log.d("HHHHHHH:",gradient.getHeight()+"");
 
@@ -189,8 +195,10 @@ public class AFSColorPicker extends Dialog implements View.OnClickListener, View
     }
 
     private void setRadialGradientColor(View tv, int[] colors){
-        GradientDrawable gd = new GradientDrawable(GradientDrawable.Orientation.TL_BR,colors);
-        tv.setBackgroundDrawable(gd);
+        GradientDrawable gd = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,colors);
+        GradientDrawable gd2 = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,new int[]{DEFAULT_BLACK_COLOR,DEFAULT_TRANSPERENT_COLOR});
+        LayerDrawable ld = new LayerDrawable(new Drawable[]{gd,gd2});
+        tv.setBackgroundDrawable(ld);
     }
 
     private Bitmap captureLayout(View v, int w, int h){
@@ -209,7 +217,7 @@ public class AFSColorPicker extends Dialog implements View.OnClickListener, View
     private void firstSelectedColor(){
         Bitmap pickerBMP = captureLayout(picker,-1,-1);
         int pickerPXL = pickerBMP.getPixel(pickerPoints.x,pickerPoints.y);
-        setRadialGradientColor(gradient, new int[]{DEFAULT_WHITE_COLOR, pickerPXL, DEFAULT_BLACK_COLOR, });
+        setRadialGradientColor(gradient, new int[]{DEFAULT_WHITE_COLOR, pickerPXL, });
 
         int left = (pickerPoints.x - Math.round(pickerLens.getWidth()/2));
         pickerLens.setX(left);
@@ -241,7 +249,7 @@ public class AFSColorPicker extends Dialog implements View.OnClickListener, View
         int r = Color.red(alphaPXL);
         int g = Color.green(alphaPXL);
         int b = Color.blue(alphaPXL);
-        String hex = String.format("#%02x%02x%02x%02x", r, g, b, a);
+        String hex = String.format("#%02x%02x%02x", r, g, b, a);
         float[] hsv = new float[3];
         Color.RGBToHSV(r,g,b, hsv);
 
@@ -290,8 +298,55 @@ public class AFSColorPicker extends Dialog implements View.OnClickListener, View
         }
     }
 
-    public void setColor(Color clr){
+    // setters
+    public void setTitle(String str){
+        dtitle.setText(str);
+    }
 
+    public void setColor(int clr){
+        SELECTED_COLOR = clr;
+    }
+
+    public void setColorPicker(int clr){
+        // for picker
+        Bitmap pickerBMP = captureLayout(picker,-1,-1);
+        Point xy = getPositionOfColor(pickerBMP,clr);
+        int pickerPXL = pickerBMP.getPixel(xy.x,xy.y);
+        setRadialGradientColor(gradient, new int[]{DEFAULT_WHITE_COLOR, pickerPXL, });
+
+        int left = (xy.x - Math.round(pickerLens.getWidth()/2));
+        pickerLens.setX(left);
+    }
+
+    // getters
+    public String getTitle(){
+        return dtitle.getText().toString();
+    }
+
+    public int getDefaultColor(){
+        return SELECTED_COLOR;
+    }
+
+    public Point getPositionOfColor(Bitmap bitmap,int color_to_find){
+        Point xy = new Point(0,0);
+        int total_width = bitmap.getWidth();
+        int total_height = bitmap.getHeight();
+        for (int y = 0; y < total_height; y++) {
+            for (int x = 0; x < total_width; x++) {
+                int pixel = bitmap.getPixel(x,y);
+                //Reading colors
+                int redValue = Color.red(pixel);
+                int blueValue = Color.blue(pixel);
+                int greenValue = Color.green(pixel);
+                //finally creating the color for pixel
+                int pixel_color = Color.rgb(redValue, blueValue, greenValue);
+                if (pixel_color == color_to_find){
+                    xy= new Point(x,y);
+                    break;
+                }
+            }
+        }
+        return xy;
     }
 
     // custom event listener methodology
