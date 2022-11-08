@@ -15,7 +15,12 @@ allprojects {
 > Step 2. Add the dependency
 ```
 dependencies {
+	// alpha version
+	implementation 'com.github.AkashFulari:AFSColorChooser:1.0'
+	// earlier updated
 	implementation 'com.github.AkashFulari:AFSColorChooser:1.0.0'
+	// letest updated
+	implementation 'com.github.AkashFulari:AFSColorChooser:2.0.0'
 }
 ```
 
